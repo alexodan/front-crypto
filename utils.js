@@ -1,15 +1,19 @@
-// Receives prices objects per hour and return min/max per day
-export function aggregateMinMaxPricesByDate(objs) {
-  // max purchase_price, min selling_price, date
+export async function fetchData() {
+  const res = await fetch('http://localhost:3000/dai');
+  const data = await res.json();
+  return aggregateMinMaxPricesByDate(data);
+}
+
+function aggregateMinMaxPricesByDate(objs) {
   var arr = [];
-  var currentDayOfMonth = moment(Date.parse(objs[0].date)).date();
+  var currentDayOfMonth = moment.unix(objs[0].date._seconds).date();
   var currentAggregation = {
     max_purchase_price: objs[0].buenbit.purchase_price,
     min_selling_price: objs[0].buenbit.selling_price,
-    date: moment(Date.parse(objs[0].date))
+    date: moment.unix(objs[0].date._seconds)
   };
   for (let i = 1; i < objs.length; i++) {
-    var dayOfMonth = moment(Date.parse(objs[i].date)).date();
+    var dayOfMonth = moment.unix(objs[i].date._seconds).date();
     if (currentDayOfMonth === dayOfMonth) {
       if (currentAggregation.max_purchase_price < objs[i].buenbit.purchase_price) {
         currentAggregation.max_purchase_price = objs[i].buenbit.purchase_price;
@@ -19,11 +23,11 @@ export function aggregateMinMaxPricesByDate(objs) {
       }
     } else {
       arr.push(currentAggregation);
-      currentDayOfMonth = moment(Date.parse(objs[i].date)).date();
+      currentDayOfMonth = moment.unix(objs[i].date._seconds).date();
       currentAggregation = {
         max_purchase_price: objs[i].buenbit.purchase_price,
         min_selling_price: objs[i].buenbit.selling_price,
-        date: moment(Date.parse(objs[i].date))
+        date: moment.unix(objs[i].date._seconds)
       };
     }
   }
