@@ -4,6 +4,7 @@ import objs from './data.js';
 fetchData().then(drawChart).catch(err => console.error(err));
 
 function drawChart(data) {
+  console.log(data);
   var width = 460;
   var height = 400;
 
@@ -28,7 +29,7 @@ function drawChart(data) {
 
   // Add Y axis
   var y = d3.scaleLinear()
-    .domain([d3.min(data, (d) => d.max_purchase_price), d3.max(data, (d) => d.max_purchase_price)])
+    .domain([d3.min(data, (d) => d.max_purchase_price), d3.max(data, (d) => d.min_selling_price)+1])
     .range([ height, 0 ]);
 
   svg.append("g")
@@ -43,5 +44,17 @@ function drawChart(data) {
     .attr("d", d3.line()
       .x((d) => x(d.date))
       .y((d) => y(d.max_purchase_price))
+      .curve(d3.curveLinear)
+    );
+
+  svg.append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "red")
+    .attr("stroke-width", 1.5)
+    .attr("d", d3.line()
+      .x((d) => x(d.date))
+      .y((d) => y(d.min_selling_price))
+      .curve(d3.curveLinear)
     );
 }
