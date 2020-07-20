@@ -1,33 +1,40 @@
 export async function fetchData() {
-  const res = await fetch('http://localhost:3000/dai');
+  const res = await fetch('http://localhost:4000/dai');
   const data = await res.json();
-  return aggregateMinMaxPricesByDate(data);
+  console.log(data);
+  const dai_arr = data.map(d => ({ date: d.date, ...d.buenbit }));
+  const btc_arr = data
+    .filter(d => d.buenbit_btc !== undefined)
+    .map(d => ({ date: d.date, ...d.buenbit_btc }));
+  const dai_agg = aggregateMinMaxPricesByDate(dai_arr);
+  const btc_agg = aggregateMinMaxPricesByDate(btc_arr);
+  return [dai_agg, btc_agg];
 }
 
-function aggregateMinMaxPricesByDate(objs) {
+function aggregateMinMaxPricesByDate(values) {
   var arr = [];
-  var currentDayOfMonth = moment(objs[0].date, moment.ISO_8601).date();
+  var currentDayOfMonth = moment(values[0].date, moment.ISO_8601).date();
   var currentAggregation = {
-    max_purchase_price: objs[0].buenbit.purchase_price,
-    min_selling_price: objs[0].buenbit.selling_price,
-    date: moment(objs[0].date, moment.ISO_8601).toDate()
+    max_purchase_price: values[0].purchase_price,
+    min_selling_price: values[0].selling_price,
+    date: moment(values[0].date, moment.ISO_8601).toDate()
   };
-  for (let i = 1; i < objs.length; i++) {
-    var dayOfMonth = moment(objs[i].date, moment.ISO_8601).date();
+  for (let i = 1; i < values.length; i++) {
+    var dayOfMonth = moment(values[i].date, moment.ISO_8601).date();
     if (currentDayOfMonth === dayOfMonth) {
-      if (currentAggregation.max_purchase_price < objs[i].buenbit.purchase_price) {
-        currentAggregation.max_purchase_price = objs[i].buenbit.purchase_price;
+      if (currentAggregation.max_purchase_price < values[i].purchase_price) {
+        currentAggregation.max_purchase_price = values[i].purchase_price;
       }
-      if (currentAggregation.min_selling_price > objs[i].buenbit.selling_price) {
-        currentAggregation.min_selling_price = objs[i].buenbit.selling_price;
+      if (currentAggregation.min_selling_price > values[i].selling_price) {
+        currentAggregation.min_selling_price = values[i].selling_price;
       }
     } else {
       arr.push(currentAggregation);
-      currentDayOfMonth = moment(objs[i].date, moment.ISO_8601).date();
+      currentDayOfMonth = moment(values[i].date, moment.ISO_8601).date();
       currentAggregation = {
-        max_purchase_price: objs[i].buenbit.purchase_price,
-        min_selling_price: objs[i].buenbit.selling_price,
-        date: moment(objs[i].date, moment.ISO_8601).toDate()
+        max_purchase_price: values[i].purchase_price,
+        min_selling_price: values[i].selling_price,
+        date: moment(values[i].date, moment.ISO_8601).toDate()
       };
     }
   }

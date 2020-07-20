@@ -1,18 +1,23 @@
 import { fetchData } from './utils.js';
 import objs from './data.js';
 
-fetchData().then(drawChart).catch(err => console.error(err));
+fetchData()
+  .then(([dai_agg, btc_agg]) => {
+    drawChart(dai_agg, "dai_dataviz");
+    console.log(btc_agg);
+    drawChart(btc_agg, "btc_dataviz");
+  })
+  .catch(err => console.error(err));
 
-function drawChart(data) {
-  console.log(data);
-  var width = 460;
+function drawChart(data, chartId) {
+  var width = 960;
   var height = 400;
 
   var margin = {top: 10, right: 30, bottom: 30, left: 60},
-      width = 460 - margin.left - margin.right,
+      width = 960 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
-  var svg = d3.select("#my_dataviz")
+  var svg = d3.select(`#${chartId}`)
     .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -39,7 +44,7 @@ function drawChart(data) {
   svg.append("path")
     .datum(data)
     .attr("fill", "none")
-    .attr("stroke", "steelblue")
+    .attr("stroke", "lime")
     .attr("stroke-width", 1.5)
     .attr("d", d3.line()
       .x((d) => x(d.date))
