@@ -1,0 +1,32 @@
+body {
+  min-height: 100vh;
+  background-color: #191F2D;
+  position: relative;
+}
+
+body::after {
+  content: "";
+  background: url('./pattern2.png');
+  opacity: 0.15;
+  background-repeat: repeat;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+svg {
+  color: #FFFFFF;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container h2 {
+  color: #FFFFFF;
+}
