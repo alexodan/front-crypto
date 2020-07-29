@@ -1,15 +1,4 @@
-import { fetchData } from './utils.js';
-import objs from './data.js';
-
-fetchData()
-  .then(([dai_agg, btc_agg]) => {
-    drawChart(dai_agg, "dai_dataviz");
-    console.log(btc_agg);
-    drawChart(btc_agg, "btc_dataviz");
-  })
-  .catch(err => console.error(err));
-
-function drawChart(data, chartId) {
+export function drawChart(data, chartId) {
   var width = 960;
   var height = 400;
 

@@ -1,16 +1,33 @@
-export async function fetchData() {
-  const res = await fetch('http://localhost:4000/dai');
-  const data = await res.json();
-  console.log(data);
-  const dai_arr = data.map(d => ({ date: d.date, ...d.buenbit }));
-  const btc_arr = data
-    .filter(d => d.buenbit_btc !== undefined)
-    .map(d => ({ date: d.date, ...d.buenbit_btc }));
-  const dai_agg = aggregateMinMaxPricesByDate(dai_arr);
-  const btc_agg = aggregateMinMaxPricesByDate(btc_arr);
-  return [dai_agg, btc_agg];
+const fetchFromApi = baseUrl => path => callback => {
+  return fetch(`${baseUrl}${path}`)
+    .then(res => res.json())
+    .then(callback)
+    .catch(err => console.error(err));
 }
 
+const fetchBuenbit = fetchFromApi('http://localhost:4000');
+const fetchBuenbitDAI = fetchBuenbit('/dai');
+const fetchBuenbitBTC = fetchBuenbit('/dai'); // todo: change to /btc
+
+// todo: extract duplicated code from `getBuenbitDaiData` and `getBuenbitBtcData`
+export const getBuenbitDaiData = async () => 
+  fetchBuenbitDAI(data => {
+    const dai_arr = data.map(d => ({ date: d.date, ...d.buenbit }));
+    const dai_agg = aggregateMinMaxPricesByDate(dai_arr);
+    return dai_agg;
+  });
+
+// todo: extract duplicated code from `getBuenbitDaiData` and `getBuenbitBtcData`
+export const getBuenbitBtcData = async () =>
+  fetchBuenbitBTC(data => {
+    const btc_arr = data
+      .filter(d => d.buenbit_btc !== undefined)
+      .map(d => ({ date: d.date, ...d.buenbit_btc }));
+    const btc_agg = aggregateMinMaxPricesByDate(btc_arr);
+    return btc_agg;
+  });
+
+// todo: refactor this to more functional approach
 function aggregateMinMaxPricesByDate(values) {
   var arr = [];
   var currentDayOfMonth = moment(values[0].date, moment.ISO_8601).date();
