@@ -23,32 +23,27 @@ export function drawChart(data, chartId) {
 
   // Add Y axis
   var y = d3.scaleLinear()
-    .domain([d3.min(data, (d) => d.max_purchase_price), d3.max(data, (d) => d.min_selling_price)+1])
+    .domain([
+      d3.min(data, (d) => d.max_purchase_price),
+      d3.max(data, (d) => d.min_selling_price+1)
+    ])
     .range([ height, 0 ]);
 
-  svg.append("g")
-    .call(d3.axisLeft(y));
+  svg.append("g").call(d3.axisLeft(y));
 
-  // Add the line
-  svg.append("path")
-    .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", "lime")
-    .attr("stroke-width", 1.5)
-    .attr("d", d3.line()
-      .x((d) => x(d.date))
-      .y((d) => y(d.max_purchase_price))
-      .curve(d3.curveLinear)
-    );
+  appendPath(svg, data, 'date', 'max_purchase_price');
+  appendPath(svg, data, 'date', 'min_selling_price');
+}
 
+function appendPath(svg, data, xProperty, yProperty) {
   svg.append("path")
     .datum(data)
     .attr("fill", "none")
     .attr("stroke", "red")
     .attr("stroke-width", 1.5)
     .attr("d", d3.line()
-      .x((d) => x(d.date))
-      .y((d) => y(d.min_selling_price))
+      .x((d) => x(d[xProperty]))
+      .y((d) => y(d[yProperty]))
       .curve(d3.curveLinear)
     );
 }
