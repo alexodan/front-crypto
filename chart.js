@@ -21,7 +21,6 @@ export function drawChart(data, chartId) {
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
 
-  // Add Y axis
   var y = d3.scaleLinear()
     .domain([
       d3.min(data, (d) => d.max_purchase_price),
@@ -31,15 +30,15 @@ export function drawChart(data, chartId) {
 
   svg.append("g").call(d3.axisLeft(y));
 
-  appendPath(svg, data, 'date', 'max_purchase_price');
-  appendPath(svg, data, 'date', 'min_selling_price');
+  appendPath(svg, data, 'date', 'max_purchase_price', x, y, "green");
+  appendPath(svg, data, 'date', 'min_selling_price', x, y, "red");
 }
 
-function appendPath(svg, data, xProperty, yProperty) {
+function appendPath(svg, data, xProperty, yProperty, x, y, color) {
   svg.append("path")
     .datum(data)
     .attr("fill", "none")
-    .attr("stroke", "red")
+    .attr("stroke", color)
     .attr("stroke-width", 1.5)
     .attr("d", d3.line()
       .x((d) => x(d[xProperty]))
