@@ -6,8 +6,8 @@ const fetchFromApi = baseUrl => path => callback => {
 }
 
 const fetchBuenbit = fetchFromApi('http://localhost:4000');
-const fetchBuenbitDAI = fetchBuenbit('/dai');
-const fetchBuenbitBTC = fetchBuenbit('/dai'); // todo: change to /btc
+const fetchBuenbitDAI = fetchBuenbit('/dai/buenbit');
+const fetchBuenbitBTC = fetchBuenbit('/dai/buenbit'); // todo: change to /btc
 
 // todo: extract duplicated code from `getBuenbitDaiData` and `getBuenbitBtcData`
 export const getBuenbitDaiData = async () =>
