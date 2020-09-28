@@ -1,4 +1,4 @@
-import { aggregateMinMaxPricesByDate } from './pricesAggregator';
+import { aggregateMinMaxPricesByDate } from './pricesAggregator.js';
 
 const fetchFromApi = baseUrl => path => callback =>
   fetch(`${baseUrl}${path}`)

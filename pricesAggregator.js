@@ -1,3 +1,5 @@
+const DateTime = luxon.DateTime;
+
 export function aggregateMinMaxPricesByDate(values) {
   var arr = [];
   var currentDayOfMonth = dayOfMonthFromDateStr(values[0].date);
